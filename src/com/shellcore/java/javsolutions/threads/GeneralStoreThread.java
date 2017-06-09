@@ -127,4 +127,8 @@ public class GeneralStoreThread extends Thread {
             System.out.println("Error al intentar cerrar el hilo del cliente " + id);
         }
     }
+
+    public void end() {
+        closeConnection();
+    }
 }

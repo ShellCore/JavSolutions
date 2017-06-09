@@ -1,5 +1,6 @@
 package com.shellcore.java.javsolutions.stores;
 
+import com.shellcore.java.javsolutions.threads.CentralStoreThread;
 import com.shellcore.java.javsolutions.threads.GeneralStoreThread;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class CentralStore {
     private int clientConnectionCounter;
     private List<GeneralStoreThread> clients;
     private ServerSocket serverSocket = null;
+
+    private CentralStoreThread server;
 
     public CentralStore() {
         if (!readServerParameters()) {
@@ -67,9 +70,8 @@ public class CentralStore {
     public void start() {
         Socket socket = null;
         GeneralStoreThread client = null;
-        inizializeReportThread();
-
         System.out.println("El servidor está encendido");
+        inizializeReportThread();
         while (true) {
             try {
                 socket = serverSocket.accept();
@@ -90,8 +92,20 @@ public class CentralStore {
 
     }
 
+    public void closeClients() {
+        for (GeneralStoreThread client :
+                clients) {
+            client.end();
+        }
+    }
+
+    public void end() {
+        System.exit(0);
+    }
+
     private void inizializeReportThread() {
-        // TODO
+        server = new CentralStoreThread(this);
+        server.run();
     }
 
     public static void main(String[] args) {
