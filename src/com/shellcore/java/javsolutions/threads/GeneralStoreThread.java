@@ -1,5 +1,6 @@
 package com.shellcore.java.javsolutions.threads;
 
+import com.shellcore.java.javsolutions.files.FileManager;
 import com.shellcore.java.javsolutions.stores.CentralStore;
 
 import java.io.*;
@@ -18,6 +19,8 @@ public class GeneralStoreThread extends Thread {
     public static final String ENDFILE = "ENDFILE";
     public static final String CONNECTIONEND = "CONNECTIONEND";
 
+    private String fileName = "";
+    private String fileContent = "";
 
     private CentralStore server;
     protected Socket socket;
@@ -80,15 +83,40 @@ public class GeneralStoreThread extends Thread {
                     default:
                         res = "El comando no es reconocido o se encuentra fuera del orden de recepción";
                         break;
-
                 }
                 break;
             case FILE_NAME:
+                if (message.endsWith(".txt")) {
+                    fileName = message;
+                    res = "Nombre de archivo confirmado. Empiece el envío del archivo";
+                    fileState = FILE_WRITING;
+                } else {
+                    res = "Nombre de archivo no contiene el formato requerido (*.txt). Vuelva a empezar desde el principio.";
+                    fileState = WAITING;
+                }
                 break;
             case FILE_WRITING:
+                if (message.equals(ENDFILE)) {
+                    res = guardarArchivo();
+                    fileState = WAITING;
+                } else {
+                    fileContent += message;
+                }
                 break;
         }
         return res;
+    }
+
+    private String guardarArchivo() {
+        String respuesta = "";
+
+        if (FileManager.saveFile(fileName, fileContent)) {
+            respuesta = "El archivo se guardó correctamente.";
+        } else {
+            respuesta = "Hubo un error al crear el archivo. Vuelva a intentarlo desde el principio";
+        }
+
+        return respuesta;
     }
 
     private void closeConnection() {
