@@ -105,7 +105,7 @@ public class CentralStore {
 
     private void inizializeReportThread() {
         server = new CentralStoreThread(this);
-        server.run();
+        server.start();
     }
 
     public static void main(String[] args) {

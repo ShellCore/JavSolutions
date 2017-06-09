@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created by Cesar. 09/06/2017.
@@ -50,9 +51,13 @@ public class FileManager {
     }
 
     public static void clearInvoiceFolder() {
-        Arrays.stream(new File(path).listFiles())
-                .forEach(File::delete);
-        System.out.println("Los archivos se borraron correctamente.");
+        if (new File(path).exists()) {
+            Arrays.stream(new File(path).listFiles())
+                    .forEach(File::delete);
+            System.out.println("Los archivos se borraron correctamente.");
+        } else {
+            System.out.println("No existen archivos para borrar");
+        }
     }
 
     public static double readTotalForInvoices() {
@@ -61,7 +66,7 @@ public class FileManager {
         List<String> files = Arrays.asList(new File(path).list());
         files.forEach(file -> {
             try {
-                totals.add(JsonManager.obtainTotalFromFile(file));
+                totals.add(JsonManager.obtainTotalFromFile(path + file));
             } catch (FileNotFoundException e) {
                 System.out.println("No se pudo leer el archivo \"" + file + "\"");
             }
@@ -71,4 +76,6 @@ public class FileManager {
                 .mapToDouble(Double::doubleValue)
                 .sum();
     }
+
+
 }

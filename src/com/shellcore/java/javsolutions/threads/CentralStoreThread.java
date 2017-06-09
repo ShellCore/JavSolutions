@@ -17,7 +17,6 @@ public class CentralStoreThread extends Thread {
     public static final String CLOSE = "CLOSE";
     private final CentralStore server;
 
-
     private String userInput;
     BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
@@ -28,43 +27,37 @@ public class CentralStoreThread extends Thread {
     @Override
     public void run() {
         try {
-            while ((userInput = stdIn.readLine()) != null) {
-                switch (userInput) {
-                    case REPORT:
-                        showReport();
-                        break;
-                    case DELETE:
-                        deleteFiles();
-                        break;
-                    case CLOSE:
-                        closeAllClientCommunication();
-                        break;
-                    default:
-                        System.out.println("Comando no reconocido\n");
-                        System.out.println("Opciones:\n");
-                        showoptions();
-                }
-            }
+            standByForUserInput();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Ocurrió un error en la lectura de datos por medio del usuario del servidor");
+        }
+    }
+
+    private void standByForUserInput() throws IOException {
+        while ((userInput = stdIn.readLine()) != null) {
+            switch (userInput) {
+                case REPORT:
+                    showReport();
+                    break;
+                case DELETE:
+                    deleteFiles();
+                    break;
+                case CLOSE:
+                    closeAllClientCommunication();
+                    break;
+                default:
+                    System.out.println("Comando no reconocido\n");
+                    System.out.println("Opciones:\n");
+                    showoptions();
+            }
         }
     }
 
     private void showReport() {
         double res = 0.0;
-
-        res = leerTotales();
-
+        res = FileManager.readTotalForInvoices();
         System.out.println("Reporte: ");
         System.out.println("Total: " + res);
-    }
-
-    private double leerTotales() {
-        double res = 0;
-
-        FileManager.readTotalForInvoices();
-
-        return res;
     }
 
     private void deleteFiles() {
@@ -82,6 +75,4 @@ public class CentralStoreThread extends Thread {
         System.out.println(CLOSE + ": Cerrar conexión de los clientes y cerrar el servidor");
         System.out.println();
     }
-
-
 }
