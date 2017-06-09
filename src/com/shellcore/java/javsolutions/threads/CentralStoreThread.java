@@ -2,10 +2,12 @@ package com.shellcore.java.javsolutions.threads;
 
 import com.shellcore.java.javsolutions.files.FileManager;
 import com.shellcore.java.javsolutions.stores.CentralStore;
+import javafx.beans.property.MapPropertyBase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 /**
  * Created by Cesar. 09/06/2017.
@@ -37,7 +39,8 @@ public class CentralStoreThread extends Thread {
         while ((userInput = stdIn.readLine()) != null) {
             switch (userInput) {
                 case REPORT:
-                    showReport();
+                    showTotalReport();
+                    showTendencyReport();
                     break;
                 case DELETE:
                     deleteFiles();
@@ -53,11 +56,19 @@ public class CentralStoreThread extends Thread {
         }
     }
 
-    private void showReport() {
+    private void showTotalReport() {
         double res = 0.0;
         res = FileManager.readTotalForInvoices();
         System.out.println("Reporte: ");
         System.out.println("Total: " + res);
+        System.out.println();
+    }
+
+    private void showTendencyReport() {
+        Map<String, Integer> bestItems = FileManager.readBestItems();
+        System.out.println("Tendencias:");
+        bestItems.forEach((item, cuantity) -> System.out.println(cuantity + " : " + item));
+        System.out.println();
     }
 
     private void deleteFiles() {

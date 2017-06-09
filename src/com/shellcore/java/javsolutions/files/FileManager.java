@@ -1,6 +1,7 @@
 package com.shellcore.java.javsolutions.files;
 
 import com.shellcore.java.javsolutions.json.JsonManager;
+import javafx.beans.property.MapPropertyBase;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -8,10 +9,10 @@ import javax.json.JsonReader;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Map.Entry.comparingByValue;
 
 /**
  * Created by Cesar. 09/06/2017.
@@ -78,4 +79,30 @@ public class FileManager {
     }
 
 
+    public static Map<String, Integer> readBestItems() {
+        Map<String, Integer> items = new HashMap<>();
+        Map<String, Integer> best = new HashMap<>();
+        List<String> files = Arrays.asList(new File(path).list());
+        files.forEach(file -> {
+            try {
+                JsonManager.obtainItemsFromFile(path + file, items);
+            } catch (FileNotFoundException e) {
+                System.out.println("No se pudo leer el archivo \"" + file + "\"");
+            }
+        });
+
+        int mayor = items.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .findFirst()
+                .get()
+                .getValue();
+
+        best = items.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .filter(item -> item.getValue() == mayor)
+                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        return best;
+    }
 }
