@@ -130,6 +130,9 @@ public class GeneralStoreThread extends Thread {
 
     private void closeConnection() {
         try {
+            if (clientOutput != null) {
+                clientOutput.println("CLOSE");
+            }
             socket.close();
             server.removeClient(this);
         } catch (IOException e) {

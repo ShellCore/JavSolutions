@@ -1,5 +1,7 @@
 package com.shellcore.java.javsolutions.stores;
 
+import com.shellcore.java.javsolutions.threads.GeneralStoreListenThread;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -90,6 +92,7 @@ public class GeneralStore {
     public void start() {
         try {
             connectToServer();
+            standByForServerInput();
             standByForUserInput();
         } catch (IOException e) {
             System.err.println("I/O Exception");
@@ -108,8 +111,14 @@ public class GeneralStore {
             //Read the welcome message from the server
             System.out.println(serverWelcome);
         } else {
-            throw new IOException("Error en la conexión");
+            clientSocket.close();
+            System.exit(0);
         }
+    }
+
+    public void standByForServerInput() {
+        GeneralStoreListenThread listenThread = new GeneralStoreListenThread(this);
+        this.start();
     }
 
     private void standByForUserInput() throws IOException {
@@ -138,8 +147,7 @@ public class GeneralStore {
                 }
                 break;
             case "CLOSE":
-                serverOut.println("CONNECTIONEND");
-                System.exit(0);
+                end();
                 break;
             default:
                 System.out.println("Comando no reconocido\n");
@@ -182,5 +190,9 @@ public class GeneralStore {
         } else {
             throw new IOException(serverMessage);
         }
+    }
+
+    public void end() {
+        System.exit(0);
     }
 }

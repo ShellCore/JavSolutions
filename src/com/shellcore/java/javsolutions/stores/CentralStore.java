@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,7 +32,7 @@ public class CentralStore {
             System.exit(1);
         }
         clientConnectionCounter = 1;
-        clients = new ArrayList<>();
+        clients = new LinkedList<>();
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
